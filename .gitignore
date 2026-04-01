@@ -12,3 +12,5 @@ __pycache__/
 *.pyzwzwzw
 .user.yml
 logs/
+.env
+test/.env

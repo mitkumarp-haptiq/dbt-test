@@ -16,11 +16,18 @@ build: null
 push: null
 
 # Local deployment: workers run flow code from your machine (no git clone).
-# Set PREFECT_PROJECT_ROOT to this repository’s absolute path in any shell where
-# you run `prefect deploy` and `prefect worker start` (e.g. export PREFECT_PROJECT_ROOT="$PWD").
+# Prefer: export PREFECT_PROJECT_ROOT to this repo’s absolute path in any shell where you
+# run `prefect deploy` / `prefect worker start`. If unset, the shell step below falls back
+# to DEFAULT_PROJECT_ROOT (edit that path when cloning on another machine).
 pull:
+- prefect.deployments.steps.run_shell_script:
+    id: resolve_project_root
+    stream_output: false
+    shell: true
+    # One line: each line of `script` is a separate subprocess.
+    script: 'if [ -n "${PREFECT_PROJECT_ROOT:-}" ]; then printf "%s" "$PREFECT_PROJECT_ROOT"; else printf "%s" "/Users/mit/Desktop/dbt-test"; fi'
 - prefect.deployments.steps.set_working_directory:
-    directory: "{{ $PREFECT_PROJECT_ROOT }}"
+    directory: "{{ resolve_project_root.stdout }}"
 
 # the deployments section allows you to provide configuration
 # for deploying flows

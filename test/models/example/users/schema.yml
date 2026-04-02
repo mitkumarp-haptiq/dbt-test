@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: intermediate
+    description: Raw copies of public data loaded by Prefect before dbt enrichment.
+    schema: intermediate
+    tables:
+      - name: users
+        description: Mirror of public.users columns; age and age_group are added downstream in ws.
+        columns:
+          - name: name
+          - name: phone_number
+          - name: date_of_birth
+
+models:
+  - name: users_age
+    description: Users with age and age_group (materialized in target schema; use ws in profile for postgres.ws).

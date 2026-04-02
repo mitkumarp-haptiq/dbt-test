@@ -1,6 +1,12 @@
 # connect to postgres database
-import psycopg2
 import os
+from pathlib import Path
+
+import psycopg2
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parent / ".env")
+
 
 def connect_to_postgres():
     return psycopg2.connect(

@@ -1,0 +1,46 @@
+---
+# Welcome to your prefect.yaml file! You can use this file for
+# storing and managing configuration for deploying your flows.
+# We recommend committing this file to source control along
+# with your flow code.
+
+# Generic metadata about this project
+name: dbt-test
+prefect-version: 3.6.24
+
+# build section allows you to manage and build docker images
+build: null
+
+# push section allows you to manage if and how this project
+# is uploaded to remote locations
+push: null
+
+# Local deployment: workers run flow code from your machine (no git clone).
+# Prefer: export PREFECT_PROJECT_ROOT to this repo’s absolute path in any shell where you
+# run `prefect deploy` / `prefect worker start`. If unset, the shell step below falls back
+# to DEFAULT_PROJECT_ROOT (edit that path when cloning on another machine).
+pull:
+- prefect.deployments.steps.run_shell_script:
+    id: resolve_project_root
+    stream_output: false
+    shell: true
+    # One line: each line of `script` is a separate subprocess.
+    script: 'if [ -n "${PREFECT_PROJECT_ROOT:-}" ]; then printf "%s" "$PREFECT_PROJECT_ROOT"; else printf "%s" "/Users/mit/Desktop/dbt-test"; fi'
+- prefect.deployments.steps.set_working_directory:
+    directory: "{{ resolve_project_root.stdout }}"
+
+# the deployments section allows you to provide configuration
+# for deploying flows
+deployments:
+- name: etl-test
+  version: null
+  tags: []
+  concurrency_limit: null
+  description: null
+  entrypoint: etl/main.py:etl_pipeline
+  parameters: {}
+  work_pool:
+    name: test-etl-pool
+    work_queue_name: null
+    job_variables: {}
+  schedules: []

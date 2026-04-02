@@ -3,3 +3,5 @@ dbt-core
 dbt-snowflake
 dbt-postgres
 prefect
+psycopg2-binary
+python-dotenv
